@@ -9,7 +9,7 @@ import { config } from 'dotenv';
 
 config({ path: '.env.variables' });
 
-@ValidatorConstraint({ name: 'isNumberArray', async: false })
+@ValidatorConstraint({ name: 'isSocialSites', async: false })
 export class IsSocialSitesConstraint implements ValidatorConstraintInterface {
   validate(value: any, args: ValidationArguments) {
     return this.isValid(value);
