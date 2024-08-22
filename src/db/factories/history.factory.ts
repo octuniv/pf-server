@@ -1,7 +1,10 @@
 import { History } from 'src/resources/historys/history.entity';
 import { setSeederFactory } from 'typeorm-extension';
-import { sepLetter } from '../constant';
+import { config } from 'dotenv';
 
+config({ path: '.env.variables' });
+
+const sepLetter = process.env.SEP_LETTER;
 export default setSeederFactory(History, (faker) => {
   const history = new History();
   history.subtitle = faker.lorem.sentence();
