@@ -1,6 +1,6 @@
 import { Seeder, SeederFactoryManager } from 'typeorm-extension';
 import { DataSource } from 'typeorm';
-import { Paragraph } from 'src/resources/paragraphs/paragraph.entity';
+import { Paragraph } from 'src/resources/paragraphs/entities/paragraph.entity';
 
 export default class ParagraphSeeder implements Seeder {
   public async run(
