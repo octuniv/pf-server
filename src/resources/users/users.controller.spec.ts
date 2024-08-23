@@ -12,9 +12,7 @@ import { User } from './entities/user.entity';
 const userEntity: User = MakeUserEntityFaker();
 
 const MockUsersServices = () => ({
-  findAll: jest.fn().mockResolvedValue(() => {
-    return [userEntity];
-  }),
+  findAll: jest.fn().mockResolvedValue(() => [userEntity]),
   update: jest.fn(),
 });
 
@@ -58,9 +56,10 @@ describe('UsersController', () => {
       jest.resetAllMocks();
     });
 
-    it('should update a user', () => {
-      usersController.update(uuid, userDto);
-      expect(usersService.update).toHaveBeenCalled();
+    it('should update a user', async () => {
+      const retVal = await usersController.update(uuid, userDto);
+      expect(retVal).toBeUndefined();
+      expect(usersService.update).toHaveBeenCalledWith(uuid, userDto);
     });
   });
 });

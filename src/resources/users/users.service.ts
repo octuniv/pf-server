@@ -11,17 +11,11 @@ export class UsersService {
     private usersRepository: Repository<User>,
   ) {}
 
-  async findAll() {
+  findAll() {
     return this.usersRepository.find();
   }
 
-  async update(uuid: string, updateUserDto: UpdateUserDto) {
-    const user = new User();
-    user.name = updateUserDto.name;
-    user.email = updateUserDto.email;
-    user.phone = updateUserDto.phone;
-    user.socialSites = updateUserDto.socialSites;
-
-    await this.usersRepository.update(uuid, user);
+  update(uuid: string, updateUserDto: UpdateUserDto) {
+    return this.usersRepository.update(uuid, { ...updateUserDto });
   }
 }

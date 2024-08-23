@@ -42,8 +42,8 @@ describe('UsersService', () => {
 
   describe('findAll()', () => {
     it('should return a userlist (but only one elem)', async () => {
-      const user = await service.findAll();
-      expect(user).toEqual(userlist);
+      const paragraphs = await service.findAll();
+      expect(paragraphs).toEqual(userlist);
     });
   });
 
@@ -59,8 +59,9 @@ describe('UsersService', () => {
 
     it('should update an user', async () => {
       const updateSpy = jest.spyOn(repository, 'update');
-      await service.update(uuid, userDto);
-      expect(updateSpy).toHaveBeenCalled();
+      const retVal = await service.update(uuid, userDto);
+      expect(retVal).toBeUndefined();
+      expect(updateSpy).toHaveBeenCalledWith(uuid, userDto);
     });
   });
 });
