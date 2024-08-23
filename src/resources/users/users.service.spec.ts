@@ -42,8 +42,8 @@ describe('UsersService', () => {
 
   describe('findAll()', () => {
     it('should return a userlist (but only one elem)', async () => {
-      const paragraphs = await service.findAll();
-      expect(paragraphs).toEqual(userlist);
+      const users = await service.findAll();
+      expect(users).toEqual(userlist);
     });
   });
 
