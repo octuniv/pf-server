@@ -1,13 +1,13 @@
 import { faker } from '@faker-js/faker';
-import { User } from './entities/user.entity';
-import { UpdateUserDto } from './dto/update-user.dto';
+import { User } from '../entities/user.entity';
+import { UpdateUserDto } from '../dto/update-user.dto';
 import { config } from 'dotenv';
 
 config({ path: '.env.variables' });
 
-const sepLetter = process.env.SEP_LETTER;
+const SEP_LETTER = process.env.SEP_LETTER;
 
-export const MakeUserFakerEntity = () => {
+export const MakeUserEntityFaker = () => {
   const userFaker = new User();
 
   userFaker.name = faker.person.fullName();
@@ -18,7 +18,7 @@ export const MakeUserFakerEntity = () => {
   return userFaker;
 };
 
-export const MakeUserFakerDto = () => {
+export const MakeUserDtoFaker = () => {
   const userDtoFaker: UpdateUserDto = {
     name: faker.person.fullName(),
     email: faker.internet.email(),
@@ -26,12 +26,12 @@ export const MakeUserFakerDto = () => {
     socialSites: Array(3)
       .fill('')
       .map(() => faker.internet.url())
-      .join(sepLetter),
+      .join(SEP_LETTER),
   };
 
   return userDtoFaker;
 };
 
-export const MakeFakerUUID = () => {
+export const MakeUUIDFaker = () => {
   return faker.string.uuid();
 };

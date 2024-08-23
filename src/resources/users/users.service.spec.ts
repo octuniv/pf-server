@@ -1,16 +1,16 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { UsersService } from './users.service';
 import {
-  MakeFakerUUID,
-  MakeUserFakerDto,
-  MakeUserFakerEntity,
-} from './user.make.faker';
+  MakeUUIDFaker,
+  MakeUserDtoFaker,
+  MakeUserEntityFaker,
+} from './fakers/user.fakers';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
 import { Repository } from 'typeorm';
 import { UpdateUserDto } from './dto/update-user.dto';
 
-const userlist = [MakeUserFakerEntity()];
+const userlist = [MakeUserEntityFaker()];
 
 const MockUserRepository = () => ({
   find: jest.fn().mockResolvedValue(userlist),
@@ -52,8 +52,8 @@ describe('UsersService', () => {
     let uuid: string;
 
     beforeEach(() => {
-      userDto = MakeUserFakerDto();
-      uuid = MakeFakerUUID();
+      userDto = MakeUserDtoFaker();
+      uuid = MakeUUIDFaker();
       jest.resetAllMocks();
     });
 

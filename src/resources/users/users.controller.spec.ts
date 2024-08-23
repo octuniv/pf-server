@@ -3,13 +3,13 @@ import { UsersController } from './users.controller';
 import { UsersService } from './users.service';
 import { UpdateUserDto } from './dto/update-user.dto';
 import {
-  MakeFakerUUID,
-  MakeUserFakerDto,
-  MakeUserFakerEntity,
-} from './user.make.faker';
+  MakeUUIDFaker,
+  MakeUserDtoFaker,
+  MakeUserEntityFaker,
+} from './fakers/user.fakers';
 import { User } from './entities/user.entity';
 
-const userEntity: User = MakeUserFakerEntity();
+const userEntity: User = MakeUserEntityFaker();
 
 const MockUsersServices = () => ({
   findAll: jest.fn().mockResolvedValue(() => {
@@ -53,8 +53,8 @@ describe('UsersController', () => {
     let userDto: UpdateUserDto;
 
     beforeEach(() => {
-      userDto = MakeUserFakerDto();
-      uuid = MakeFakerUUID();
+      userDto = MakeUserDtoFaker();
+      uuid = MakeUUIDFaker();
       jest.resetAllMocks();
     });
 

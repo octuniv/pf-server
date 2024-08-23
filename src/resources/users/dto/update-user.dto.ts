@@ -5,7 +5,7 @@ import {
   Matches,
   Validate,
 } from 'class-validator';
-import { IsSocialSitesConstraint } from './validation/sociasites.decorator';
+import { IsSocialSites } from './validation/sociasites.validation';
 
 export class UpdateUserDto {
   @IsNotEmpty()
@@ -20,7 +20,7 @@ export class UpdateUserDto {
   @IsNotEmpty()
   phone: string;
 
-  @Validate(IsSocialSitesConstraint)
+  @Validate(IsSocialSites)
   @IsNotEmpty()
   socialSites: string;
 }

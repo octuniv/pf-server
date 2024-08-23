@@ -4,12 +4,12 @@ import { config } from 'dotenv';
 
 config({ path: '.env.variables' });
 
-const sepLetter = process.env.SEP_LETTER;
+const SEP_LETTER = process.env.SEP_LETTER;
 export default setSeederFactory(History, (faker) => {
   const history = new History();
   history.subtitle = faker.lorem.sentence();
-  history.intro = faker.lorem.sentences(2, sepLetter);
-  history.content = faker.lorem.sentences(3, sepLetter);
+  history.intro = faker.lorem.sentences(2, SEP_LETTER);
+  history.content = faker.lorem.sentences(3, SEP_LETTER);
 
   return history;
 });
