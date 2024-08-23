@@ -1,4 +1,13 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  ParseUUIDPipe,
+} from '@nestjs/common';
 import { ParagraphsService } from './paragraphs.service';
 import { CreateParagraphDto } from './dto/create-paragraph.dto';
 import { UpdateParagraphDto } from './dto/update-paragraph.dto';
@@ -18,17 +27,20 @@ export class ParagraphsController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.paragraphsService.findOne(+id);
+  findOne(@Param('id', new ParseUUIDPipe()) id: string) {
+    return this.paragraphsService.findOne(id);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateParagraphDto: UpdateParagraphDto) {
-    return this.paragraphsService.update(+id, updateParagraphDto);
+  update(
+    @Param('id', new ParseUUIDPipe()) id: string,
+    @Body() updateParagraphDto: UpdateParagraphDto,
+  ) {
+    return this.paragraphsService.update(id, updateParagraphDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.paragraphsService.remove(+id);
+  remove(@Param('id', new ParseUUIDPipe()) id: string) {
+    return this.paragraphsService.remove(id);
   }
 }

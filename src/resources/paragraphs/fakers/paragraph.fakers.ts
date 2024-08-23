@@ -2,6 +2,7 @@ import { faker } from '@faker-js/faker';
 import { CreateParagraphDto } from '../dto/create-paragraph.dto';
 
 import { config } from 'dotenv';
+import { Paragraph } from '../entities/paragraph.entity';
 
 config({ path: '.env.variables' });
 
@@ -15,3 +16,14 @@ export const MakeParagraphDtoFaker = () => {
 
   return paragraphDtoFaker;
 };
+
+export const MakeParagraphEntityFaker = () => {
+  const paragraphEntity = new Paragraph();
+  paragraphEntity.id = faker.string.uuid();
+  paragraphEntity.title = faker.lorem.sentence();
+  paragraphEntity.content = faker.lorem.sentences(3, SEP_LETTER);
+  paragraphEntity.createAt = faker.date.recent();
+  return paragraphEntity;
+};
+
+export const MakeUUIDFaker = () => faker.string.uuid();
