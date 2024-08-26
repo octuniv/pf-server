@@ -3,7 +3,6 @@ import {
   Get,
   Post,
   Body,
-  Patch,
   Param,
   Delete,
   ParseUUIDPipe,
@@ -17,30 +16,30 @@ export class ParagraphsController {
   constructor(private readonly paragraphsService: ParagraphsService) {}
 
   @Post()
-  create(@Body() createParagraphDto: CreateParagraphDto) {
+  async create(@Body() createParagraphDto: CreateParagraphDto) {
     return this.paragraphsService.create(createParagraphDto);
   }
 
+  @Post('/posts/:id')
+  async updatePosts(
+    @Param('id', new ParseUUIDPipe()) id: string,
+    @Body() updateParagraphDto: UpdateParagraphDto,
+  ) {
+    return this.paragraphsService.updatePosts(id, updateParagraphDto);
+  }
+
+  @Delete(':id')
+  async remove(@Param('id', new ParseUUIDPipe()) id: string) {
+    return this.paragraphsService.remove(id);
+  }
+
   @Get()
-  findAll() {
+  async findAll() {
     return this.paragraphsService.findAll();
   }
 
   @Get(':id')
-  findOne(@Param('id', new ParseUUIDPipe()) id: string) {
+  async findOne(@Param('id', new ParseUUIDPipe()) id: string) {
     return this.paragraphsService.findOne(id);
-  }
-
-  @Patch(':id')
-  update(
-    @Param('id', new ParseUUIDPipe()) id: string,
-    @Body() updateParagraphDto: UpdateParagraphDto,
-  ) {
-    return this.paragraphsService.update(id, updateParagraphDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id', new ParseUUIDPipe()) id: string) {
-    return this.paragraphsService.remove(id);
   }
 }

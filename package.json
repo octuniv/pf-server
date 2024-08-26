@@ -19,8 +19,8 @@
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "migration:generate": "pnpm build && npx typeorm migration:generate -d dist/src/db/data-source.js src/db/migrations/PostRefactoring",
-    "migration:run": "npx typeorm-ts-node-commonjs migration:run -d dist/src/db/data-source.js",
-    "migration:revert": "npx typeorm-ts-node-commonjs migration:revert -d dist/src/db/data-source.js",
+    "migration:run": "pnpm build && npx typeorm-ts-node-commonjs migration:run -d dist/src/db/data-source.js",
+    "migration:revert": "pnpm build && npx typeorm-ts-node-commonjs migration:revert -d dist/src/db/data-source.js",
     "seed:run": "pnpm build && ts-node src/db/run-seeder.ts"
   },
   "dependencies": {

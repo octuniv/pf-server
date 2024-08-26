@@ -1,18 +1,6 @@
-import { IsNotEmpty, IsString, Matches } from 'class-validator';
+import { OmitType, PartialType } from '@nestjs/mapped-types';
+import { UpdateParagraphDto } from './update-paragraph.dto';
 
-import { config } from 'dotenv';
-
-config({ path: '.env.variables' });
-
-const SEP_LETTER = process.env.SEP_LETTER;
-
-export class CreateParagraphDto {
-  @IsNotEmpty()
-  @IsString()
-  title: string;
-
-  @IsNotEmpty()
-  @IsString()
-  @Matches(new RegExp(`.+[^${SEP_LETTER}]$`))
-  content: string;
-}
+export class CreateParagraphDto extends PartialType(
+  OmitType(UpdateParagraphDto, ['posts'] as const),
+) {}

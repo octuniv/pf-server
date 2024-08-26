@@ -3,8 +3,9 @@ import { ParagraphsController } from './paragraphs.controller';
 import { ParagraphsService } from './paragraphs.service';
 import { CreateParagraphDto } from './dto/create-paragraph.dto';
 import {
-  MakeParagraphDtoFaker,
-  MakeParagraphEntityFaker,
+  FilterCreateParagraphDto,
+  MakeParagraphsFaker,
+  MakeUpdateParagraphDtoFaker,
   MakeUUIDFaker,
 } from './fakers/paragraph.fakers';
 import { faker } from '@faker-js/faker';
@@ -14,7 +15,8 @@ const createParagAutoProperties = {
   craeteAt: faker.date.recent(),
 };
 
-const findOneParagEntity = MakeParagraphEntityFaker();
+const mockParagraphs = MakeParagraphsFaker();
+const oneMockParagraph = mockParagraphs[0];
 
 const MockParagraphsService = () => ({
   create: jest.fn().mockImplementation((parag: CreateParagraphDto) =>
@@ -23,18 +25,14 @@ const MockParagraphsService = () => ({
       ...parag,
     }),
   ),
-  findAll: jest.fn().mockResolvedValue(
-    Array(3)
-      .fill('')
-      .map(() => MakeParagraphEntityFaker()),
-  ),
+  findAll: jest.fn().mockResolvedValue(mockParagraphs),
   findOne: jest.fn().mockImplementation((id: string) =>
     Promise.resolve({
-      ...findOneParagEntity,
+      ...oneMockParagraph,
       id,
     }),
   ),
-  update: jest.fn(),
+  updatePosts: jest.fn(),
   remove: jest.fn(),
 });
 
@@ -63,7 +61,9 @@ describe('ParagraphsController', () => {
 
   describe('create()', () => {
     it('should create a user', () => {
-      const createParagDto = MakeParagraphDtoFaker();
+      const createParagDto = FilterCreateParagraphDto(
+        MakeUpdateParagraphDtoFaker(),
+      );
       expect(controller.create(createParagDto)).resolves.toEqual({
         ...createParagAutoProperties,
         ...createParagDto,
@@ -73,29 +73,29 @@ describe('ParagraphsController', () => {
   });
 
   describe('findAll()', () => {
-    it('should find all users', () => {
-      controller.findAll();
+    it('should find all users', async () => {
+      await controller.findAll();
       expect(service.findAll).toHaveBeenCalled();
     });
   });
 
   describe('findOne()', () => {
     it('should find an user', () => {
-      const id = MakeUUIDFaker();
+      const id = oneMockParagraph.id;
       expect(controller.findOne(id)).resolves.toEqual({
-        ...findOneParagEntity,
+        ...oneMockParagraph,
         id,
       });
       expect(service.findOne).toHaveBeenCalled();
     });
   });
 
-  describe('update()', () => {
-    it('should call to update an user', () => {
+  describe('updatePosts()', () => {
+    it('should call to update an user', async () => {
       const id = MakeUUIDFaker();
-      const updateDto = MakeParagraphDtoFaker();
-      controller.update(id, updateDto);
-      expect(service.update).toHaveBeenCalledWith(id, updateDto);
+      const updateDto = MakeUpdateParagraphDtoFaker();
+      await controller.updatePosts(id, updateDto);
+      expect(service.updatePosts).toHaveBeenCalledWith(id, updateDto);
     });
   });
 

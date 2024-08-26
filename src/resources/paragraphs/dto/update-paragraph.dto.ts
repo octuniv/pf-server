@@ -1,4 +1,11 @@
-import { PartialType } from '@nestjs/mapped-types';
-import { CreateParagraphDto } from './create-paragraph.dto';
+import { IsNotEmpty, IsString, IsArray } from 'class-validator';
 
-export class UpdateParagraphDto extends PartialType(CreateParagraphDto) {}
+export class UpdateParagraphDto {
+  @IsNotEmpty()
+  @IsString()
+  title: string;
+
+  @IsArray()
+  @IsString({ each: true })
+  posts: string[];
+}

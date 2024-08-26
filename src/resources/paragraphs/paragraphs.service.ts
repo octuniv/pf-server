@@ -4,34 +4,69 @@ import { UpdateParagraphDto } from './dto/update-paragraph.dto';
 import { Repository } from 'typeorm';
 import { Paragraph } from './entities/paragraph.entity';
 import { InjectRepository } from '@nestjs/typeorm';
+import { PgPost } from './entities/pgPost.entity';
 
 @Injectable()
 export class ParagraphsService {
   constructor(
     @InjectRepository(Paragraph)
     private paragraphsRepository: Repository<Paragraph>,
+    @InjectRepository(PgPost)
+    private pgPostRepository: Repository<PgPost>,
   ) {}
 
-  create(createParagraphDto: CreateParagraphDto) {
+  async create(createParagraphDto: CreateParagraphDto) {
     const paragraph = new Paragraph();
     paragraph.title = createParagraphDto.title;
-    paragraph.content = createParagraphDto.content;
     return this.paragraphsRepository.save(paragraph);
   }
 
-  findAll() {
-    return this.paragraphsRepository.find();
+  async updatePosts(id: string, updateParagraphDto: UpdateParagraphDto) {
+    /*
+      TODO : This actions should be made into a transaction
+    */
+    const paragraphEntity = await this.paragraphsRepository.findOneBy({
+      id: id,
+    });
+    await this.pgPostRepository.delete({ parag_id: id });
+
+    return this.pgPostRepository.insert(
+      this.makePostEntitys(updateParagraphDto, paragraphEntity),
+    );
   }
 
-  findOne(id: string) {
-    return this.paragraphsRepository.findOneBy({ id: id });
+  makePostEntitys(
+    updateParagraphDto: UpdateParagraphDto,
+    paragraphEntity: Paragraph,
+  ) {
+    return updateParagraphDto.posts.map((post) => {
+      const postEntity = new PgPost();
+      postEntity.post = post;
+      postEntity.paragraph = paragraphEntity;
+      return postEntity;
+    });
   }
 
-  update(id: string, updateParagraphDto: UpdateParagraphDto) {
-    return this.paragraphsRepository.update(id, { ...updateParagraphDto });
-  }
-
-  remove(id: string) {
+  async remove(id: string) {
     return this.paragraphsRepository.delete(id);
+  }
+
+  async findAll() {
+    return this.paragraphsRepository.find({
+      relations: {
+        posts: true,
+      },
+    });
+  }
+
+  async findOne(id: string) {
+    return this.paragraphsRepository.findOne({
+      where: {
+        id: id,
+      },
+      relations: {
+        posts: true,
+      },
+    });
   }
 }

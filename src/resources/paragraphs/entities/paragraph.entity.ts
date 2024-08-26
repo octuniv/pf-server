@@ -1,4 +1,5 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { PgPost } from './pgPost.entity';
 
 @Entity()
 export class Paragraph {
@@ -8,8 +9,8 @@ export class Paragraph {
   @Column('varchar', { length: 255 })
   title: string;
 
-  @Column('text')
-  content: string;
+  @OneToMany(() => PgPost, (pgPost) => pgPost.paragraph)
+  posts: PgPost[];
 
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   createAt: Date;
