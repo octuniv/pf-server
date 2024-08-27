@@ -28,7 +28,7 @@ describe('Update-User.Dto', () => {
 
   it('should be invalid with invalid socialSites', () => {
     const wrongUserDto = MakeUserDtoFaker();
-    wrongUserDto.socialSites = ['a.b.com', 'b.c.ddd'].join('##$$****&^^');
+    wrongUserDto.socialSites = ['a.b.com', 'b.c.ddd.e'];
     const updateUserDto = plainToClass(UpdateUserDto, wrongUserDto);
     const errors = validateSync(updateUserDto);
     expect(errors).toHaveLength(1);

@@ -1,4 +1,6 @@
 import {
+  ArrayNotEmpty,
+  IsArray,
   IsEmail,
   IsNotEmpty,
   IsString,
@@ -20,7 +22,9 @@ export class UpdateUserDto {
   @IsNotEmpty()
   phone: string;
 
+  @IsArray()
+  @ArrayNotEmpty()
+  @IsString({ each: true })
   @Validate(IsSocialSites)
-  @IsNotEmpty()
-  socialSites: string;
+  socialSites: string[];
 }

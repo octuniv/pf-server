@@ -9,6 +9,10 @@ import {
 import { UsersService } from './users.service';
 import { UpdateUserDto } from './dto/update-user.dto';
 
+/*
+  ToDo : remodeling controller (because of amending dto and entity)
+*/
+
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
