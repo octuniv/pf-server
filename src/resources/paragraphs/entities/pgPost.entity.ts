@@ -13,14 +13,16 @@ export class PgPost {
   id: number;
 
   @Column('text')
-  post: string;
+  post!: string;
 
   @Column('string', { nullable: false })
-  parag_id: string;
+  parag_id!: string;
 
   @ManyToOne(() => Paragraph, (paragraph) => paragraph.posts, {
     onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
+    orphanedRowAction: 'delete',
   })
   @JoinColumn({ name: 'parag_id' })
-  paragraph: Paragraph;
+  paragraph!: Paragraph;
 }

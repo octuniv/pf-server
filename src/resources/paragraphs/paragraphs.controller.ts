@@ -21,11 +21,11 @@ export class ParagraphsController {
   }
 
   @Post('/posts/:id')
-  async updatePosts(
+  async update(
     @Param('id', new ParseUUIDPipe()) id: string,
     @Body() updateParagraphDto: UpdateParagraphDto,
   ) {
-    return this.paragraphsService.updatePosts(id, updateParagraphDto);
+    return this.paragraphsService.update(id, updateParagraphDto);
   }
 
   @Delete(':id')

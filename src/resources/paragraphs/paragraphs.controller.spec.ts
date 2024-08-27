@@ -32,7 +32,7 @@ const MockParagraphsService = () => ({
       id,
     }),
   ),
-  updatePosts: jest.fn(),
+  update: jest.fn(),
   remove: jest.fn(),
 });
 
@@ -90,12 +90,12 @@ describe('ParagraphsController', () => {
     });
   });
 
-  describe('updatePosts()', () => {
+  describe('update()', () => {
     it('should call to update an user', async () => {
       const id = MakeUUIDFaker();
       const updateDto = MakeUpdateParagraphDtoFaker();
-      await controller.updatePosts(id, updateDto);
-      expect(service.updatePosts).toHaveBeenCalledWith(id, updateDto);
+      await controller.update(id, updateDto);
+      expect(service.update).toHaveBeenCalledWith(id, updateDto);
     });
   });
 

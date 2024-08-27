@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateParagraphDto } from './dto/create-paragraph.dto';
 import { UpdateParagraphDto } from './dto/update-paragraph.dto';
 import { Repository } from 'typeorm';
@@ -21,30 +21,21 @@ export class ParagraphsService {
     return this.paragraphsRepository.save(paragraph);
   }
 
-  async updatePosts(id: string, updateParagraphDto: UpdateParagraphDto) {
-    /*
-      TODO : This actions should be made into a transaction
-    */
-    const paragraphEntity = await this.paragraphsRepository.findOneBy({
+  async update(id: string, updateParagraphDto: UpdateParagraphDto) {
+    const findParagraph = await this.paragraphsRepository.findOneBy({
       id: id,
     });
-    await this.pgPostRepository.delete({ parag_id: id });
-
-    return this.pgPostRepository.insert(
-      this.makePostEntitys(updateParagraphDto, paragraphEntity),
-    );
-  }
-
-  makePostEntitys(
-    updateParagraphDto: UpdateParagraphDto,
-    paragraphEntity: Paragraph,
-  ) {
-    return updateParagraphDto.posts.map((post) => {
-      const postEntity = new PgPost();
-      postEntity.post = post;
-      postEntity.paragraph = paragraphEntity;
-      return postEntity;
+    if (!findParagraph) {
+      throw new NotFoundException(`Paragraph with id ${id} not found`);
+    }
+    findParagraph.title = updateParagraphDto.title;
+    findParagraph.posts = updateParagraphDto.posts.map((post) => {
+      return this.pgPostRepository.create({
+        post: post,
+        paragraph: findParagraph,
+      });
     });
+    return this.paragraphsRepository.save(findParagraph);
   }
 
   async remove(id: string) {

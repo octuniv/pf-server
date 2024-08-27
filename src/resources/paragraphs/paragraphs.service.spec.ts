@@ -24,8 +24,7 @@ const MockParagraphRepository = () => ({
 });
 
 const MockPgPostRepositort = () => ({
-  delete: jest.fn(),
-  insert: jest.fn(),
+  create: jest.fn(),
 });
 
 describe('ParagraphsService', () => {
@@ -96,17 +95,14 @@ describe('ParagraphsService', () => {
     });
   });
 
-  describe('updatePosts()', () => {
+  describe('update()', () => {
     it('should call to update a paragraph', async () => {
-      const deletePgPostSpy = jest.spyOn(pgPostRepository, 'delete');
-      const insertPgPostSpy = jest.spyOn(pgPostRepository, 'insert');
       const id = oneParagraph.id;
       const updateParagDto = MakeUpdateParagraphDtoFaker();
-      await service.updatePosts(id, updateParagDto);
-      expect(deletePgPostSpy).toHaveBeenCalledWith({ parag_id: id });
-      expect(insertPgPostSpy).toHaveBeenCalledWith(
-        service.makePostEntitys(updateParagDto, oneParagraph),
-      );
+      await service.update(id, updateParagDto);
+      expect(paragraphRepository.findOneBy).toHaveBeenCalledWith({ id: id });
+      expect(pgPostRepository.create).toHaveBeenCalledTimes(3);
+      expect(paragraphRepository.save).toHaveBeenCalled();
     });
   });
 
