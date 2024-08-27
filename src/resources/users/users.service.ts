@@ -1,26 +1,37 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
 import { Repository } from 'typeorm';
-
-/*
-  ToDo : remodeling services (because of amending dto and entity)
-*/
+import { SocialSite } from './entities/socialsite.entity';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(User)
     private usersRepository: Repository<User>,
+    @InjectRepository(SocialSite)
+    private socialSitesRepository: Repository<SocialSite>,
   ) {}
 
-  findAll() {
+  async findAll() {
     return this.usersRepository.find();
   }
 
-  update(uuid: string, updateUserDto: UpdateUserDto) {
-    // return this.usersRepository.update(uuid, { ...updateUserDto });
-    return '';
+  async update(id: string, updateUserDto: UpdateUserDto) {
+    const findUser = await this.usersRepository.findOneBy({ id: id });
+    if (!findUser) {
+      throw new NotFoundException(`User with id ${id} not found`);
+    }
+    findUser.name = updateUserDto.name;
+    findUser.email = updateUserDto.email;
+    findUser.phone = updateUserDto.phone;
+    findUser.socialSites = updateUserDto.socialSites.map((site) => {
+      return this.socialSitesRepository.create({
+        url: site,
+        user: findUser,
+      });
+    });
+    return this.usersRepository.save(findUser);
   }
 }

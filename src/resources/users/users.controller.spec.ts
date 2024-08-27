@@ -5,11 +5,11 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import {
   MakeUUIDFaker,
   MakeUserDtoFaker,
-  MakeUserEntityFaker,
+  MakeUserFaker,
 } from './fakers/user.fakers';
 import { User } from './entities/user.entity';
 
-const userEntity: User = MakeUserEntityFaker();
+const userEntity: User = MakeUserFaker();
 
 const MockUsersServices = () => ({
   findAll: jest.fn().mockResolvedValue(() => [userEntity]),
@@ -57,8 +57,7 @@ describe('UsersController', () => {
     });
 
     it('should update a user', async () => {
-      const retVal = await usersController.update(uuid, userDto);
-      expect(retVal).toBeUndefined();
+      await usersController.update(uuid, userDto);
       expect(usersService.update).toHaveBeenCalledWith(uuid, userDto);
     });
   });

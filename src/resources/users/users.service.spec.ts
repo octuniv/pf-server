@@ -3,23 +3,30 @@ import { UsersService } from './users.service';
 import {
   MakeUUIDFaker,
   MakeUserDtoFaker,
-  MakeUserEntityFaker,
+  MakeUserFaker,
 } from './fakers/user.fakers';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
 import { Repository } from 'typeorm';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { SocialSite } from './entities/socialsite.entity';
 
-const userlist = [MakeUserEntityFaker()];
+const userlist = [MakeUserFaker()];
 
 const MockUserRepository = () => ({
   find: jest.fn().mockResolvedValue(userlist),
-  update: jest.fn(),
+  findOneBy: jest.fn().mockResolvedValue(userlist[0]),
+  save: jest.fn(),
+});
+
+const MockSocialSiteRepository = () => ({
+  create: jest.fn(),
 });
 
 describe('UsersService', () => {
   let service: UsersService;
-  let repository: Repository<User>;
+  let userRepository: Repository<User>;
+  let socialSiteRepository: Repository<SocialSite>;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -29,11 +36,18 @@ describe('UsersService', () => {
           provide: getRepositoryToken(User),
           useValue: MockUserRepository(),
         },
+        {
+          provide: getRepositoryToken(SocialSite),
+          useValue: MockSocialSiteRepository(),
+        },
       ],
     }).compile();
 
     service = module.get<UsersService>(UsersService);
-    repository = module.get<Repository<User>>(getRepositoryToken(User));
+    userRepository = module.get<Repository<User>>(getRepositoryToken(User));
+    socialSiteRepository = module.get<Repository<SocialSite>>(
+      getRepositoryToken(SocialSite),
+    );
   });
 
   it('should be defined', () => {
@@ -44,24 +58,18 @@ describe('UsersService', () => {
     it('should return a userlist (but only one elem)', async () => {
       const users = await service.findAll();
       expect(users).toEqual(userlist);
+      expect(userRepository.find).toHaveBeenCalled();
     });
   });
 
   describe('update()', () => {
-    let userDto: UpdateUserDto;
-    let uuid: string;
-
-    beforeEach(() => {
-      userDto = MakeUserDtoFaker();
-      uuid = MakeUUIDFaker();
-      jest.resetAllMocks();
-    });
-
     it('should update an user', async () => {
-      const updateSpy = jest.spyOn(repository, 'update');
-      const retVal = await service.update(uuid, userDto);
-      expect(retVal).toBeUndefined();
-      expect(updateSpy).toHaveBeenCalledWith(uuid, userDto);
+      const userDto: UpdateUserDto = MakeUserDtoFaker();
+      const uuid = MakeUUIDFaker();
+      await service.update(uuid, userDto);
+      expect(userRepository.findOneBy).toHaveBeenCalled();
+      expect(socialSiteRepository.create).toHaveBeenCalledTimes(3);
+      expect(userRepository.save).toHaveBeenCalled();
     });
   });
 });
