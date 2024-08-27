@@ -6,7 +6,6 @@ export default setSeederFactory(User, (faker) => {
   user.name = faker.person.fullName();
   user.email = faker.internet.email();
   user.phone = faker.helpers.fromRegExp(/01[0-9]{1}-[0-9]{4}-[0-9]{4}/);
-  user.socialSites = faker.internet.url();
 
   return user;
 });

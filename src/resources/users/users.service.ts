@@ -20,6 +20,7 @@ export class UsersService {
   }
 
   update(uuid: string, updateUserDto: UpdateUserDto) {
-    return this.usersRepository.update(uuid, { ...updateUserDto });
+    // return this.usersRepository.update(uuid, { ...updateUserDto });
+    return '';
   }
 }

@@ -1,4 +1,5 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { SocialSite } from './socialsite.entity';
 
 @Entity()
 export class User {
@@ -14,6 +15,6 @@ export class User {
   @Column('varchar', { length: 100 })
   phone: string;
 
-  @Column('text')
-  socialSites: string;
+  @OneToMany(() => SocialSite, (site) => site.user)
+  socialSites: SocialSite[];
 }

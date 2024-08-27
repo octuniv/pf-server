@@ -8,7 +8,7 @@ export const MakeUserEntityFaker = () => {
   userFaker.name = faker.person.fullName();
   userFaker.email = faker.internet.email();
   userFaker.phone = faker.helpers.fromRegExp(/01[0-9]{1}-[0-9]{4}-[0-9]{4}/);
-  userFaker.socialSites = faker.internet.url();
+  // userFaker.socialSites = faker.internet.url();
 
   return userFaker;
 };
