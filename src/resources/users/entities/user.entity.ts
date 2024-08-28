@@ -15,6 +15,8 @@ export class User {
   @Column('varchar', { length: 100 })
   phone: string;
 
-  @OneToMany(() => SocialSite, (site) => site.user)
+  @OneToMany(() => SocialSite, (site) => site.user, {
+    cascade: ['insert', 'update'],
+  })
   socialSites: SocialSite[];
 }

@@ -11,11 +11,13 @@ export class IsSocialSites implements ValidatorConstraintInterface {
     return this.isValid(value);
   }
 
-  private isValid(socialSites: string[]): boolean {
+  private isValid(value: any): boolean {
     const urlExpression =
       /^http(s)?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)$/;
-    if (!socialSites.every((site) => urlExpression.test(site))) return false;
-    return true;
+    return (
+      Array.isArray(value) &&
+      value.reduce((acc, cur) => acc && urlExpression.test(cur))
+    );
   }
 
   defaultMessage(args: ValidationArguments) {

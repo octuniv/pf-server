@@ -1,8 +1,9 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { UsersService } from './users.service';
 import {
+  MakeCreateUserDtoFaker,
   MakeUUIDFaker,
-  MakeUserDtoFaker,
+  MakeUpdateUserDtoFaker,
   MakeUserFaker,
 } from './fakers/user.fakers';
 import { getRepositoryToken } from '@nestjs/typeorm';
@@ -17,6 +18,7 @@ const MockUserRepository = () => ({
   find: jest.fn().mockResolvedValue(userlist),
   findOneBy: jest.fn().mockResolvedValue(userlist[0]),
   save: jest.fn(),
+  create: jest.fn(),
 });
 
 const MockSocialSiteRepository = () => ({
@@ -62,9 +64,18 @@ describe('UsersService', () => {
     });
   });
 
+  describe('create()', () => {
+    it('should create an user', async () => {
+      const createDto = MakeCreateUserDtoFaker();
+      await service.create(createDto);
+      expect(userRepository.create).toHaveBeenCalledWith(createDto);
+      expect(userRepository.save).toHaveBeenCalled();
+    });
+  });
+
   describe('update()', () => {
     it('should update an user', async () => {
-      const userDto: UpdateUserDto = MakeUserDtoFaker();
+      const userDto: UpdateUserDto = MakeUpdateUserDtoFaker();
       const uuid = MakeUUIDFaker();
       await service.update(uuid, userDto);
       expect(userRepository.findOneBy).toHaveBeenCalled();

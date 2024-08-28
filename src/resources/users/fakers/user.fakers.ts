@@ -2,6 +2,7 @@ import { faker } from '@faker-js/faker';
 import { User } from '../entities/user.entity';
 import { UpdateUserDto } from '../dto/update-user.dto';
 import { SocialSite } from '../entities/socialsite.entity';
+import { createUserDto } from '../dto/create-user.dto';
 
 const MakeUserEntityFaker = () => {
   const userFaker = new User();
@@ -30,7 +31,16 @@ export const MakeUserFaker = () => {
   return user;
 };
 
-export const MakeUserDtoFaker = () => {
+export const MakeCreateUserDtoFaker = () => {
+  const userDtoFaker: createUserDto = {
+    name: faker.person.fullName(),
+    email: faker.internet.email(),
+    phone: faker.helpers.fromRegExp(/01[0-9]{1}-[0-9]{4}-[0-9]{4}/),
+  };
+  return userDtoFaker;
+};
+
+export const MakeUpdateUserDtoFaker = () => {
   const userDtoFaker: UpdateUserDto = {
     name: faker.person.fullName(),
     email: faker.internet.email(),
