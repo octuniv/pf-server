@@ -2,6 +2,14 @@ import { faker } from '@faker-js/faker';
 import { Paragraph } from '../entities/paragraph.entity';
 import { PgPost } from '../entities/pgPost.entity';
 import { UpdateParagraphDto } from '../dto/update-paragraph.dto';
+import { CreateParagraphDto } from '../dto/create-paragraph.dto';
+
+export const MakeCreateParagraphDtoFaker = () => {
+  const paragraphDto: CreateParagraphDto = {
+    title: faker.lorem.sentence(),
+  };
+  return paragraphDto;
+};
 
 export const MakeUpdateParagraphDtoFaker = () => {
   const paragraphDtoFaker: UpdateParagraphDto = {

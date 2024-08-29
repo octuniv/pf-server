@@ -6,6 +6,7 @@ import {
   Param,
   Delete,
   ParseUUIDPipe,
+  Patch,
 } from '@nestjs/common';
 import { ParagraphsService } from './paragraphs.service';
 import { CreateParagraphDto } from './dto/create-paragraph.dto';
@@ -20,7 +21,7 @@ export class ParagraphsController {
     return this.paragraphsService.create(createParagraphDto);
   }
 
-  @Post('/posts/:id')
+  @Patch('/update/:id')
   async update(
     @Param('id', new ParseUUIDPipe()) id: string,
     @Body() updateParagraphDto: UpdateParagraphDto,
@@ -28,7 +29,7 @@ export class ParagraphsController {
     return this.paragraphsService.update(id, updateParagraphDto);
   }
 
-  @Delete(':id')
+  @Delete('/delete/:id')
   async remove(@Param('id', new ParseUUIDPipe()) id: string) {
     return this.paragraphsService.remove(id);
   }

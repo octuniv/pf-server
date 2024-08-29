@@ -24,7 +24,7 @@ describe('User - /users (e2e)', () => {
     await app.init();
   });
 
-  it('Create [Post /users/]', () => {
+  it('Create [Post /users/]', async () => {
     return request(app.getHttpServer())
       .post('/users')
       .send(MakeCreateUserDtoFaker())
@@ -35,7 +35,7 @@ describe('User - /users (e2e)', () => {
       });
   });
 
-  it('Get all Users [GET /users]', () => {
+  it('Get all Users [GET /users]', async () => {
     return request(app.getHttpServer())
       .get('/users')
       .expect(200)
@@ -44,7 +44,7 @@ describe('User - /users (e2e)', () => {
       });
   });
 
-  it('Update [PATCH /users/:id]', () => {
+  it('Update user [PATCH /users/update/:id]', async () => {
     const userDto = MakeUpdateUserDtoFaker();
     const { socialSites, ...restDtoElem } = userDto;
     return request(app.getHttpServer())

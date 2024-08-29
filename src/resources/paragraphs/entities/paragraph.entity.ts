@@ -9,7 +9,9 @@ export class Paragraph {
   @Column('varchar', { length: 255 })
   title: string;
 
-  @OneToMany(() => PgPost, (pgPost) => pgPost.paragraph)
+  @OneToMany(() => PgPost, (pgPost) => pgPost.paragraph, {
+    cascade: ['insert', 'update'],
+  })
   posts: PgPost[];
 
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
