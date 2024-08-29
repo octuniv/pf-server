@@ -1,5 +1,5 @@
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
-import { History } from '../historys/history.entity';
+import { History } from './history.entity';
 
 @Entity()
 export class Board {
@@ -12,6 +12,8 @@ export class Board {
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   createAt: Date;
 
-  @OneToMany(() => History, (History) => History.board)
+  @OneToMany(() => History, (History) => History.board, {
+    cascade: ['insert', 'update'],
+  })
   historys: History[];
 }
