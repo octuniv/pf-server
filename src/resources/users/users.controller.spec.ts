@@ -3,19 +3,15 @@ import { UsersController } from './users.controller';
 import { UsersService } from './users.service';
 import { UpdateUserDto } from './dto/update-user.dto';
 import {
-  MakeFakerUUID,
-  MakeUserFakerDto,
-  MakeUserFakerEntity,
-} from './user.make.faker';
-import { User } from './entities/user.entity';
-
-const userEntity: User = MakeUserFakerEntity();
+  MakeCreateUserDtoFaker,
+  MakeUUIDFaker,
+  MakeUpdateUserDtoFaker,
+} from './fakers/user.fakers';
 
 const MockUsersServices = () => ({
-  findAll: jest.fn().mockResolvedValue(() => {
-    return [userEntity];
-  }),
+  findAll: jest.fn(),
   update: jest.fn(),
+  create: jest.fn(),
 });
 
 describe('UsersController', () => {
@@ -48,19 +44,26 @@ describe('UsersController', () => {
     });
   });
 
+  describe('create()', () => {
+    it('should create a user', async () => {
+      await usersController.create(MakeCreateUserDtoFaker());
+      expect(usersService.create).toHaveBeenCalled();
+    });
+  });
+
   describe('update()', () => {
     let uuid: string;
     let userDto: UpdateUserDto;
 
     beforeEach(() => {
-      userDto = MakeUserFakerDto();
-      uuid = MakeFakerUUID();
+      userDto = MakeUpdateUserDtoFaker();
+      uuid = MakeUUIDFaker();
       jest.resetAllMocks();
     });
 
-    it('should update a user', () => {
-      usersController.update(uuid, userDto);
-      expect(usersService.update).toHaveBeenCalled();
+    it('should update a user', async () => {
+      await usersController.update(uuid, userDto);
+      expect(usersService.update).toHaveBeenCalledWith(uuid, userDto);
     });
   });
 });

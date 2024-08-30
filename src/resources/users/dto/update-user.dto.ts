@@ -1,11 +1,13 @@
 import {
+  ArrayNotEmpty,
+  IsArray,
   IsEmail,
   IsNotEmpty,
   IsString,
   Matches,
   Validate,
 } from 'class-validator';
-import { IsSocialSitesConstraint } from './validation/sociasites.decorator';
+import { IsSocialSites } from './validation/sociasites.validation';
 
 export class UpdateUserDto {
   @IsNotEmpty()
@@ -20,7 +22,9 @@ export class UpdateUserDto {
   @IsNotEmpty()
   phone: string;
 
-  @Validate(IsSocialSitesConstraint)
-  @IsNotEmpty()
-  socialSites: string;
+  @IsArray()
+  @ArrayNotEmpty()
+  @IsString({ each: true })
+  @Validate(IsSocialSites)
+  socialSites: string[];
 }

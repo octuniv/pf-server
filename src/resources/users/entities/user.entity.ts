@@ -1,9 +1,10 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { SocialSite } from './socialsite.entity';
 
 @Entity()
 export class User {
   @PrimaryGeneratedColumn('uuid')
-  id: number;
+  id: string;
 
   @Column('varchar', { length: 100 })
   name: string;
@@ -14,6 +15,8 @@ export class User {
   @Column('varchar', { length: 100 })
   phone: string;
 
-  @Column('text')
-  socialSites: string;
+  @OneToMany(() => SocialSite, (site) => site.user, {
+    cascade: ['insert', 'update'],
+  })
+  socialSites: SocialSite[];
 }
