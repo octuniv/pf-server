@@ -13,6 +13,7 @@ import { BoardsService } from './boards.service';
 import { CreateBoardDto } from './dto/create-board.dto';
 import { UpdateBoardDto } from './dto/update-board.dto';
 import { HistoryDto } from './dto/history.dto';
+import { PartialHistoryDto } from './dto/partial-history.dto';
 
 @Controller('boards')
 export class BoardsController {
@@ -57,6 +58,15 @@ export class BoardsController {
     return this.boardsService.update(boardId, updateBoardDto);
   }
 
+  @Patch('/history/:boardId/:histId')
+  updateHistory(
+    @Param('boardId', new ParseUUIDPipe()) boardId: string,
+    @Param('histId', new ParseIntPipe()) histId: number,
+    @Body() updateHistoryDto: PartialHistoryDto,
+  ) {
+    return this.boardsService.updateHistory(boardId, histId, updateHistoryDto);
+  }
+
   @Delete('/history/:boardId/:histId')
   removeHistory(
     @Param('boardId', new ParseUUIDPipe()) boardId: string,
@@ -65,7 +75,7 @@ export class BoardsController {
     return this.boardsService.removeHistory(boardId, histId);
   }
 
-  @Delete('/board/:boardId')
+  @Delete(':boardId')
   removeBoard(@Param('boardId', new ParseUUIDPipe()) boardId: string) {
     return this.boardsService.removeBoard(boardId);
   }

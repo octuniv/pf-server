@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { CreateBoardDto } from './dto/create-board.dto';
 import { UpdateBoardDto } from './dto/update-board.dto';
 import { HistoryDto } from './dto/history.dto';
+import { PartialHistoryDto } from './dto/partial-history.dto';
 
 /*
 ToDo : write service
@@ -36,6 +37,14 @@ export class BoardsService {
 
   update(boardId: string, updateBoardDto: UpdateBoardDto) {
     return `This action updates a #${boardId} board`;
+  }
+
+  updateHistory(
+    boardId: string,
+    histId: number,
+    updateHistoryDto: PartialHistoryDto,
+  ) {
+    return '';
   }
 
   removeHistory(boardId: string, historyId: number) {
