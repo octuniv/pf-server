@@ -6,14 +6,13 @@ import {
   Patch,
   Param,
   Delete,
+  ParseUUIDPipe,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { BoardsService } from './boards.service';
 import { CreateBoardDto } from './dto/create-board.dto';
 import { UpdateBoardDto } from './dto/update-board.dto';
-
-/*
-ToDo: write contoller interface
-*/
+import { HistoryDto } from './dto/history.dto';
 
 @Controller('boards')
 export class BoardsController {
@@ -24,23 +23,50 @@ export class BoardsController {
     return this.boardsService.create(createBoardDto);
   }
 
+  @Post('/history/:boardId')
+  insertHistory(
+    @Param('boardId', new ParseUUIDPipe()) boardId: string,
+    @Body() insertHistoryDto: HistoryDto,
+  ) {
+    return this.boardsService.insertHistory(boardId, insertHistoryDto);
+  }
+
   @Get()
   findAll() {
     return this.boardsService.findAll();
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.boardsService.findOne(+id);
+  @Get('/board/:boardId')
+  findBoard(@Param('boardId', new ParseUUIDPipe()) boardId: string) {
+    return this.boardsService.findBoard(boardId);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateBoardDto: UpdateBoardDto) {
-    return this.boardsService.update(+id, updateBoardDto);
+  @Get('/history/:boardId/:histId')
+  findHistory(
+    @Param('boardId', new ParseUUIDPipe()) boardId: string,
+    @Param('histId', new ParseIntPipe()) histId: number,
+  ) {
+    return this.boardsService.findHistory(boardId, histId);
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.boardsService.remove(+id);
+  @Patch(':boardId')
+  update(
+    @Param('boardId', new ParseUUIDPipe()) boardId: string,
+    @Body() updateBoardDto: UpdateBoardDto,
+  ) {
+    return this.boardsService.update(boardId, updateBoardDto);
+  }
+
+  @Delete('/history/:boardId/:histId')
+  removeHistory(
+    @Param('boardId', new ParseUUIDPipe()) boardId: string,
+    @Param('histId', new ParseIntPipe()) histId: number,
+  ) {
+    return this.boardsService.removeHistory(boardId, histId);
+  }
+
+  @Delete('/board/:boardId')
+  removeBoard(@Param('boardId', new ParseUUIDPipe()) boardId: string) {
+    return this.boardsService.removeBoard(boardId);
   }
 }

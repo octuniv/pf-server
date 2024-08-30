@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { CreateBoardDto } from './dto/create-board.dto';
 import { UpdateBoardDto } from './dto/update-board.dto';
+import { HistoryDto } from './dto/history.dto';
 
 /*
 ToDo : write service
@@ -11,19 +12,40 @@ export class BoardsService {
     return 'This action adds a new board';
   }
 
+  insertHistory(boardId: string, historyDto: HistoryDto) {
+    /*
+    ToDo: insert only one history
+    */
+    return '';
+  }
+
   findAll() {
     return `This action returns all boards`;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} board`;
+  findBoard(boardId: string) {
+    return `This action returns a #${boardId} board`;
   }
 
-  update(id: number, updateBoardDto: UpdateBoardDto) {
-    return `This action updates a #${id} board`;
+  findHistory(boardId: string, historyId: number) {
+    /*
+    ToDo: find a history belong correct board
+    */
+    return '';
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} board`;
+  update(boardId: string, updateBoardDto: UpdateBoardDto) {
+    return `This action updates a #${boardId} board`;
+  }
+
+  removeHistory(boardId: string, historyId: number) {
+    /*
+    ToDo: delete a history belong correct board
+    */
+    return '';
+  }
+
+  removeBoard(boardId: string) {
+    return `This action removes a #${boardId} board`;
   }
 }
