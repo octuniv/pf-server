@@ -5,11 +5,11 @@ import { Type } from 'class-transformer';
 export class UpdateBoardDto {
   @IsOptional()
   @IsString()
-  title: string;
+  title?: string;
 
   @IsOptional()
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => PartialHistoryDto)
-  historys: PartialHistoryDto[];
+  historys?: PartialHistoryDto[];
 }

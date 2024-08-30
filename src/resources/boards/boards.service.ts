@@ -1,60 +1,121 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateBoardDto } from './dto/create-board.dto';
 import { UpdateBoardDto } from './dto/update-board.dto';
 import { HistoryDto } from './dto/history.dto';
-import { PartialHistoryDto } from './dto/partial-history.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Board } from './entities/board.entity';
+import { Repository } from 'typeorm';
+import { History } from './entities/history.entity';
+import { HistoryIntro } from './entities/historyIntro.entity';
+import { HistoryContent } from './entities/historyContent.entity';
+import { boardDtoToEntity, historyDtoToEntity } from './util/boards.utils';
 
-/*
-ToDo : write service
-*/
 @Injectable()
 export class BoardsService {
-  create(createBoardDto: CreateBoardDto) {
-    return 'This action adds a new board';
+  constructor(
+    @InjectRepository(Board)
+    private BoardRepository: Repository<Board>,
+    @InjectRepository(History)
+    private HistoryReporisoty: Repository<History>,
+  ) {}
+
+  async create(createBoardDto: CreateBoardDto) {
+    return this.BoardRepository.save(boardDtoToEntity(createBoardDto));
   }
 
-  insertHistory(boardId: string, historyDto: HistoryDto) {
-    /*
-    ToDo: insert only one history
-    */
-    return '';
+  async insertHistory(boardId: string, historyDto: HistoryDto) {
+    const findBoard = await this.findBoard(boardId);
+    if (!findBoard)
+      throw new NotFoundException(`Board with id ${boardId} not found`);
+    const historyEntity = historyDtoToEntity(historyDto);
+    historyEntity.board = findBoard;
+    return this.HistoryReporisoty.save(historyEntity);
   }
 
-  findAll() {
-    return `This action returns all boards`;
+  async findAll() {
+    return this.BoardRepository.find({
+      relations: {
+        historys: {
+          intros: true,
+          contents: true,
+        },
+      },
+    });
   }
 
-  findBoard(boardId: string) {
-    return `This action returns a #${boardId} board`;
+  async findBoard(boardId: string) {
+    return this.BoardRepository.findOne({
+      where: { id: boardId },
+      relations: {
+        historys: {
+          intros: true,
+          contents: true,
+        },
+      },
+    });
   }
 
-  findHistory(boardId: string, historyId: number) {
-    /*
-    ToDo: find a history belong correct board
-    */
-    return '';
+  async findHistory(boardId: string, historyId: number) {
+    const findHistory = await this.HistoryReporisoty.findOne({
+      where: {
+        id: historyId,
+        board_id: boardId,
+      },
+      relations: {
+        intros: true,
+        contents: true,
+      },
+    });
+    if (!findHistory)
+      throw new NotFoundException(
+        `history with board ${boardId} and history ${historyId} not found`,
+      );
+    return findHistory;
   }
 
-  update(boardId: string, updateBoardDto: UpdateBoardDto) {
-    return `This action updates a #${boardId} board`;
+  async update(boardId: string, updateBoardDto: UpdateBoardDto) {
+    const board = await this.findBoard(boardId);
+    if (!board) throw new NotFoundException(`board with ${boardId} not found`);
+    const updateBoardEntity = boardDtoToEntity(updateBoardDto);
+    return this.BoardRepository.update(boardId, updateBoardEntity);
   }
 
-  updateHistory(
+  async updateHistory(
     boardId: string,
-    histId: number,
-    updateHistoryDto: PartialHistoryDto,
+    historyId: number,
+    updateHistoryDto: HistoryDto,
   ) {
-    return '';
+    const history = await this.findHistory(boardId, historyId);
+    if (!history)
+      throw new NotFoundException(
+        `history with board ${boardId} and hist ${historyId} not found`,
+      );
+    history.subtitle = updateHistoryDto.subtitle;
+    history.intros = updateHistoryDto.intros.map((intro) => {
+      const introEntity = new HistoryIntro();
+      introEntity.intro = intro;
+      return introEntity;
+    });
+    history.contents = updateHistoryDto.contents.map((content) => {
+      const contentEntity = new HistoryContent();
+      contentEntity.content = content;
+      return contentEntity;
+    });
+    return this.HistoryReporisoty.save(history);
   }
 
-  removeHistory(boardId: string, historyId: number) {
-    /*
-    ToDo: delete a history belong correct board
-    */
-    return '';
+  async removeHistory(boardId: string, historyId: number) {
+    const history = await this.findHistory(boardId, historyId);
+    if (!history)
+      throw new NotFoundException(
+        `history with board ${boardId} and hist ${historyId} not found`,
+      );
+    return this.HistoryReporisoty.remove(history);
   }
 
-  removeBoard(boardId: string) {
-    return `This action removes a #${boardId} board`;
+  async removeBoard(boardId: string) {
+    const board = await this.findBoard(boardId);
+    if (!board) throw new NotFoundException(`board with ${boardId} not found`);
+    return this.BoardRepository.remove(board);
   }
 }

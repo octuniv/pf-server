@@ -1,5 +1,11 @@
 import { Type } from 'class-transformer';
-import { IsArray, IsNotEmpty, IsString, ValidateNested } from 'class-validator';
+import {
+  IsArray,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  ValidateNested,
+} from 'class-validator';
 import { HistoryDto } from './history.dto';
 
 export class CreateBoardDto {
@@ -7,8 +13,9 @@ export class CreateBoardDto {
   @IsString()
   title: string;
 
+  @IsOptional()
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => HistoryDto)
-  historys!: HistoryDto[];
+  historys?: HistoryDto[];
 }
