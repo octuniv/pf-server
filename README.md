@@ -24,7 +24,25 @@
 
 ## Description
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+This Project is httpServer of [portfolio project](https://github.com/octuniv/portfolio).
+Before started, You should set up the .env, .env.test files to connect postgresql and output port by referring to .env.example.
+If you need, run migration by referring to below command.
+You can use unittest and e2e test.
+
+This project use dependencies below.
+
+```bash
+dependencies:
+@nestjs/common 10.4.1            @nestjs/core 10.4.1              @nestjs/platform-express 10.4.1  dotenv 16.4.5                    reflect-metadata 0.2.2           typeorm 0.3.20
+@nestjs/config 3.2.3             @nestjs/mapped-types 2.0.5       @nestjs/typeorm 10.0.2           pg 8.12.0                        rxjs 7.8.1                       typeorm-extension 3.6.1
+
+devDependencies:
+@faker-js/faker 8.4.1                    @types/express 4.17.21                   @typescript-eslint/eslint-plugin 7.18.0  eslint 8.57.0                            prettier 3.3.3                           ts-loader 9.5.1
+@nestjs/cli 10.4.4                       @types/jest 29.5.12                      @typescript-eslint/parser 7.18.0         eslint-config-prettier 9.1.0             source-map-support 0.5.21                ts-node 10.9.2
+@nestjs/schematics 10.1.3                @types/node 20.14.15                     class-transformer 0.5.1                  eslint-plugin-prettier 5.2.1             supertest 7.0.0                          tsconfig-paths 4.2.0
+@nestjs/testing 10.4.1                   @types/supertest 6.0.2                   class-validator 0.14.1                   jest 29.7.0                              ts-jest 29.2.4                           typescript 5.5.4
+
+```
 
 ## Installation
 
@@ -56,6 +74,22 @@ $ pnpm run test:e2e
 
 # test coverage
 $ pnpm run test:cov
+```
+
+## Migration
+
+```bash
+# Make Migration
+$ pnpm migration:generate
+
+# Run Migration
+$ pnpm migration:run
+
+# Revert Migration
+$ pnpm migration:revert
+
+# input default data (seed)
+$ pnpm seed:run
 ```
 
 ## Support
