@@ -35,15 +35,6 @@ describe('User - /users (e2e)', () => {
       });
   });
 
-  it('Get all Users [GET /users]', async () => {
-    return request(app.getHttpServer())
-      .get('/users')
-      .expect(200)
-      .then(({ body }) => {
-        expect(body).toEqual([user]);
-      });
-  });
-
   it('Update user [PATCH /users/update/:id]', async () => {
     const userDto = MakeUpdateUserDtoFaker();
     const { socialSites, ...restDtoElem } = userDto;
@@ -52,11 +43,31 @@ describe('User - /users (e2e)', () => {
       .send(userDto)
       .expect(200)
       .then(({ body }) => {
-        const { id, socialSites: inputSites, ...restBody } = body;
+        user = body;
+        const { id, socialSites: inputSites, ...restBody } = user;
         expect(id).toEqual(user.id);
         expect(restBody).toEqual(restDtoElem);
         expect(inputSites.map((site: SocialSite) => site.url)).toEqual(
           socialSites,
+        );
+      });
+  });
+
+  it('Get all Users [GET /users]', async () => {
+    return request(app.getHttpServer())
+      .get('/users')
+      .expect(200)
+      .then(({ body }) => {
+        expect(body).toHaveLength(1);
+        const { socialSites, ...rest } = body[0];
+        const { socialSites: expectSites, ...restUser } = user;
+        expect(rest).toEqual(restUser);
+        expect(socialSites).toEqual(
+          expectSites.map((site) => ({
+            id: site.id,
+            url: site.url,
+            user_id: site.user_id,
+          })),
         );
       });
   });

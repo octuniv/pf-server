@@ -16,7 +16,11 @@ export class UsersService {
   ) {}
 
   async findAll() {
-    return this.usersRepository.find();
+    return this.usersRepository.find({
+      relations: {
+        socialSites: true,
+      },
+    });
   }
 
   async create(createUserDto: createUserDto) {
