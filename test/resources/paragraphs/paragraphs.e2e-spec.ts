@@ -65,6 +65,7 @@ describe('Paragraph - /paragraphs (e2e)', () => {
     return request(app.getHttpServer())
       .patch(`/paragraphs/update/${paragraph.id}`)
       .send(paragDto)
+      .expect(200)
       .then(({ body }) => {
         const { title, posts } = body;
         expect(title).toEqual(dtoTitle);
@@ -75,6 +76,7 @@ describe('Paragraph - /paragraphs (e2e)', () => {
   it('Delete paragraph [DELETE /paragraphs/delete/:id]', () => {
     return request(app.getHttpServer())
       .delete(`/paragraphs/delete/${paragraph.id}`)
+      .expect(200)
       .then(({ body }) => {
         expect(body.affected).toEqual(1);
       });
