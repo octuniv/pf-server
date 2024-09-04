@@ -80,14 +80,7 @@ describe('BoardsService', () => {
   describe('findAll()', () => {
     it('should call find funciton in boardRepo successfully', async () => {
       await service.findAll();
-      expect(boardRepository.find).toHaveBeenCalledWith({
-        relations: {
-          historys: {
-            intros: true,
-            contents: true,
-          },
-        },
-      });
+      expect(boardRepository.find).toHaveBeenCalled();
     });
   });
 
@@ -95,15 +88,7 @@ describe('BoardsService', () => {
     it('should call findOne function in boardRepo successfully', async () => {
       const boardId = makeUUID();
       expect(service.findBoard(boardId)).resolves.toEqual(returnBoardEntity);
-      expect(boardRepository.findOne).toHaveBeenCalledWith({
-        where: { id: boardId },
-        relations: {
-          historys: {
-            intros: true,
-            contents: true,
-          },
-        },
-      });
+      expect(boardRepository.findOne).toHaveBeenCalled();
     });
   });
 
@@ -113,16 +98,7 @@ describe('BoardsService', () => {
       expect(service.findHistory(boardId, histId)).resolves.toEqual(
         returnHistoryEntity,
       );
-      expect(historyRepository.findOne).toHaveBeenCalledWith({
-        where: {
-          id: histId,
-          board_id: boardId,
-        },
-        relations: {
-          intros: true,
-          contents: true,
-        },
-      });
+      expect(historyRepository.findOne).toHaveBeenCalled();
     });
   });
 

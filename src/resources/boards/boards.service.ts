@@ -40,6 +40,18 @@ export class BoardsService {
           contents: true,
         },
       },
+      order: {
+        createAt: 'ASC',
+        historys: {
+          id: 'ASC',
+          intros: {
+            id: 'ASC',
+          },
+          contents: {
+            id: 'ASC',
+          },
+        },
+      },
     });
   }
 
@@ -50,6 +62,17 @@ export class BoardsService {
         historys: {
           intros: true,
           contents: true,
+        },
+      },
+      order: {
+        historys: {
+          id: 'ASC',
+          intros: {
+            id: 'ASC',
+          },
+          contents: {
+            id: 'ASC',
+          },
         },
       },
     });
@@ -65,7 +88,16 @@ export class BoardsService {
         intros: true,
         contents: true,
       },
+      order: {
+        intros: {
+          id: 'ASC',
+        },
+        contents: {
+          id: 'ASC',
+        },
+      },
     });
+
     if (!findHistory)
       throw new NotFoundException(
         `history with board ${boardId} and history ${historyId} not found`,

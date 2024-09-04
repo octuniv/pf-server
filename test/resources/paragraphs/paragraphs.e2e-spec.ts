@@ -9,7 +9,8 @@ import {
   MakeCreateParagraphDtoFaker,
   MakeUpdateParagraphDtoFaker,
 } from '../../../src/resources/paragraphs/fakers/paragraph.fakers';
-import { PgPost } from 'src/resources/paragraphs/entities/pgPost.entity';
+import { PgPost } from '../../../src/resources/paragraphs/entities/pgPost.entity';
+import { UpdateParagraphDto } from '../../../src/resources/paragraphs/dto/update-paragraph.dto';
 
 describe('Paragraph - /paragraphs (e2e)', () => {
   let app: INestApplication;
@@ -80,6 +81,95 @@ describe('Paragraph - /paragraphs (e2e)', () => {
       .then(({ body }) => {
         expect(body.affected).toEqual(1);
       });
+  });
+
+  describe('all find* request should make sorted output', () => {
+    const createRequest = async () => {
+      return request(app.getHttpServer())
+        .post('/paragraphs')
+        .send(MakeCreateParagraphDtoFaker())
+        .expect(201)
+        .then(({ body }) => {
+          expect(body).toBeDefined();
+        });
+    };
+
+    const updateRequest = async (id: string, paragDto: UpdateParagraphDto) => {
+      return request(app.getHttpServer())
+        .patch(`/paragraphs/update/${id}`)
+        .send(paragDto)
+        .expect(200);
+    };
+
+    const updateParag = MakeUpdateParagraphDtoFaker();
+
+    const deleteRequest = async (id: string) => {
+      return request(app.getHttpServer())
+        .delete(`/paragraphs/delete/${id}`)
+        .expect(200);
+    };
+    const clearDB = async () => {
+      const ids = [];
+      await request(app.getHttpServer())
+        .get('/paragraphs')
+        .expect(200)
+        .then(({ body }) => {
+          body.forEach((parag) => {
+            ids.push(parag.id);
+          });
+        });
+      await Promise.all(ids.map((id) => deleteRequest(id)));
+    };
+
+    it('Get all sorted paragraphs [GET /paragraphs]', async () => {
+      let changedId: string;
+      const isSortedParag = (parags: Paragraph[]) =>
+        parags.every(
+          (p, ind, arr) => !ind || arr[ind - 1].createAt <= p.createAt,
+        );
+      await Promise.all(
+        Array(5)
+          .fill('')
+          .map(() => createRequest()),
+      );
+      await request(app.getHttpServer())
+        .get('/paragraphs')
+        .expect(200)
+        .then(({ body }) => {
+          expect(body).toHaveLength(5);
+          changedId = body[2].id;
+        });
+      await updateRequest(changedId, updateParag);
+      return request(app.getHttpServer())
+        .get('/paragraphs')
+        .expect(200)
+        .then(({ body }) => {
+          expect(body).toHaveLength(5);
+          expect(isSortedParag(body)).toBeTruthy();
+        })
+        .then(() => clearDB());
+    });
+
+    it('Get sorted posts [GET /paragraphs/:id]', async () => {
+      let changedId: string;
+      const isSortedPosts = (posts: PgPost[]) =>
+        posts.every((p, ind, arr) => !ind || arr[ind - 1].id < p.id);
+      await createRequest();
+      await request(app.getHttpServer())
+        .get('/paragraphs')
+        .expect(200)
+        .then(({ body }) => {
+          expect(body).toHaveLength(1);
+          changedId = body[0].id;
+        });
+      await updateRequest(changedId, updateParag);
+      return request(app.getHttpServer())
+        .get(`/paragraphs/${changedId}`)
+        .expect(200)
+        .then(({ body }) => {
+          expect(isSortedPosts(body.posts)).toBeTruthy();
+        });
+    });
   });
 
   afterAll(async () => {

@@ -12,6 +12,7 @@ import { BoardsModule } from '../../../src/resources/boards/boards.module';
 import { historyDtoToEntity } from '../../../src/resources/boards/util/boards.utils';
 import { HistoryIntro } from '../../../src/resources/boards/entities/historyIntro.entity';
 import { History } from '../../../src/resources/boards/entities/history.entity';
+// import { HistoryDto } from '../../../src/resources/boards/dto/history.dto';
 
 describe('Board - /boards (e2e)', () => {
   let app: INestApplication;
@@ -155,6 +156,109 @@ describe('Board - /boards (e2e)', () => {
       .then(({ body }) => {
         expect(body).toEqual([]);
       });
+  });
+
+  describe('all find* request should make sorted output', () => {
+    const createRequest = async () => {
+      return request(app.getHttpServer())
+        .post('/boards')
+        .send(MakeBoardDtoFaker())
+        .expect(201);
+    };
+
+    const insertHistory = async (boardId: string) => {
+      return request(app.getHttpServer())
+        .post(`/boards/history/${boardId}`)
+        .send(MakeHistoryDtoFaker())
+        .expect(201);
+    };
+
+    const deleteHistory = async (boardId: string, histId: number) => {
+      return request(app.getHttpServer())
+        .delete(`/boards/history/${boardId}/${histId}`)
+        .expect(200);
+    };
+
+    const deleteRequest = async (boardId: string) => {
+      return request(app.getHttpServer())
+        .delete(`/boards/${boardId}`)
+        .expect(200);
+    };
+
+    const clearDB = async () => {
+      const allIds = [];
+
+      await request(app.getHttpServer())
+        .get('/boards')
+        .expect(200)
+        .then(({ body }) => {
+          body.forEach((board: Board) => allIds.push(board.id));
+        });
+      return Promise.all(allIds.map((id) => deleteRequest(id)));
+    };
+
+    it('find Sorted Historys in Board [Get /boards/board/:boardId]', async () => {
+      let changeBoardId: string;
+      let changeHistIds: number[];
+      const isSortedHistories = (histories: History[]) =>
+        histories.every((h, ind, arr) => !ind || arr[ind - 1].id < h.id);
+      await createRequest();
+      await request(app.getHttpServer())
+        .get('/boards')
+        .expect(200)
+        .then(({ body }) => {
+          expect(body).toHaveLength(1);
+          changeBoardId = body[0].id;
+          changeHistIds = body[0].historys.map((hist: History) => hist.id);
+          expect(changeHistIds).toHaveLength(2);
+        });
+      await Promise.all(
+        Array(4)
+          .fill('')
+          .map(() => insertHistory(changeBoardId)),
+      );
+      await deleteHistory(changeBoardId, changeHistIds[1]);
+
+      return request(app.getHttpServer())
+        .get(`/boards/board/${changeBoardId}`)
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.historys).toHaveLength(5);
+          expect(isSortedHistories(body.historys)).toBeTruthy();
+        })
+        .then(() => clearDB());
+    });
+
+    it('find All Sorted Boards [Get /boards]', async () => {
+      let deleteBoardId: string;
+      const isSortedBoards = (boards: Board[]) =>
+        boards.every((b, ind, arr) => !ind || arr[ind].createAt <= b.createAt);
+      await Promise.all(
+        Array(5)
+          .fill('')
+          .map(() => createRequest()),
+      );
+      await request(app.getHttpServer())
+        .get('/boards')
+        .expect(200)
+        .then(({ body }) => {
+          expect(body).toHaveLength(5);
+          deleteBoardId = body[2].id;
+        });
+      await Promise.all(
+        Array(3)
+          .fill('')
+          .map(() => createRequest()),
+      );
+      await deleteRequest(deleteBoardId);
+      return request(app.getHttpServer())
+        .get('/boards')
+        .expect(200)
+        .then(({ body }) => {
+          expect(body).toHaveLength(7);
+          expect(isSortedBoards(body)).toBeTruthy();
+        });
+    });
   });
 
   afterAll(async () => {

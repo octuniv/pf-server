@@ -47,6 +47,12 @@ export class ParagraphsService {
       relations: {
         posts: true,
       },
+      order: {
+        createAt: 'ASC',
+        posts: {
+          id: 'ASC',
+        },
+      },
     });
   }
 
@@ -57,6 +63,11 @@ export class ParagraphsService {
       },
       relations: {
         posts: true,
+      },
+      order: {
+        posts: {
+          id: 'ASC',
+        },
       },
     });
   }

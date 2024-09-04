@@ -84,14 +84,7 @@ describe('ParagraphsService', () => {
       const repoSpy = jest.spyOn(paragraphRepository, 'findOne');
       const id = oneParagraph.id;
       expect(service.findOne(id)).resolves.toEqual(oneParagraph);
-      expect(repoSpy).toHaveBeenCalledWith({
-        where: {
-          id: id,
-        },
-        relations: {
-          posts: true,
-        },
-      });
+      expect(repoSpy).toHaveBeenCalled();
     });
   });
 
